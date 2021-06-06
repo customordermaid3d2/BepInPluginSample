@@ -105,9 +105,9 @@ namespace BepInPluginSample
 
         }
 
+        private const float windowSpace = 40.0f;
         private Rect windowRect = new Rect(windowSpace, windowSpace, 400f, 400f);
         private int windowId = new System.Random().Next();
-        private const float windowSpace = 40.0f;
 
 
         public void OnGUI()
@@ -162,8 +162,8 @@ namespace BepInPluginSample
                 Debug.Log("changed");
             }
 
-            GUI.DragWindow(); // 창 드레그 가능하게 해줌. 마지막에만 넣어야함
             GUI.enabled = true;
+            GUI.DragWindow(); // 창 드레그 가능하게 해줌. 마지막에만 넣어야함
         }
 
         private bool isCoroutine = false;
@@ -183,6 +183,8 @@ namespace BepInPluginSample
         public void OnDisable()
         {
             MyLog.LogMessage("OnDisable");
+
+            isCoroutine = false;
 
             SceneManager.sceneLoaded -= this.OnSceneLoaded;
 
