@@ -7,3 +7,6 @@
 - 코루틴  
 - 하모니  
 - OnSceneLoaded 기본 사용법.  scene.buildIndex는 쓰지 말자 제발.  
+
+
+![2021-06-06 19 16 10](https://user-images.githubusercontent.com/20321215/120920873-f7b72d00-c6fb-11eb-80a7-8e9e73d3a013.png)

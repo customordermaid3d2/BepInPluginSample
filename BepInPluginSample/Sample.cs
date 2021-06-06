@@ -66,7 +66,7 @@ namespace BepInPluginSample
         /// </summary>
         public void Start()
         {
-            MyLog.LogMessage("OnEnable");
+            MyLog.LogMessage("Start");
         }
 
         public string scene_name = string.Empty;
@@ -174,7 +174,7 @@ namespace BepInPluginSample
             isCoroutine = true;
             while (isCoroutine)
             {
-                    MyLog.LogMessage("MyCoroutine", ++CoroutineCount);
+                    MyLog.LogMessage("MyCoroutine ", ++CoroutineCount);
                 //yield return null;
                 yield return new WaitForSeconds(1f);
             }
