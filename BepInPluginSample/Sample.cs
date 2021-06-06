@@ -73,8 +73,8 @@ namespace BepInPluginSample
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            MyLog.LogMessage("OnSceneLoaded", scene.name);
-
+            MyLog.LogMessage("OnSceneLoaded", scene.name, scene.buildIndex);
+            //  scene.buildIndex 는 쓰지 말자 제발
             scene_name = scene.name;
         }
 
@@ -116,6 +116,7 @@ namespace BepInPluginSample
             {
                 return;
             }
+            // 윈도우 리사이즈시 밖으로 나가버리는거 방지
             windowRect.x = Mathf.Clamp(windowRect.x, -windowRect.width + windowSpace, Screen.width - windowSpace);
             windowRect.y = Mathf.Clamp(windowRect.y, -windowRect.height + windowSpace, Screen.height - windowSpace);
             windowRect = GUILayout.Window(windowId, windowRect, WindowFunction, "Sample:" + scene_name);
@@ -185,7 +186,8 @@ namespace BepInPluginSample
 
             SceneManager.sceneLoaded -= this.OnSceneLoaded;
 
-            harmony.UnpatchSelf();
+            harmony.UnpatchSelf();// ==harmony.UnpatchAll(harmony.Id);
+            //harmony.UnpatchAll(); // 정대 사용 금지. 다름 플러그인이 패치한것까지 다 풀려버림
         }
 
         public void Pause()
