@@ -12,7 +12,7 @@ namespace BepInPluginSample
     public class MyWindowRect
     {
         private float windowSpace;
-        public Rect windowRect;
+        private Rect windowRect;
         private Position position;
         private static string jsonPath;
 
