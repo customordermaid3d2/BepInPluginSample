@@ -35,7 +35,7 @@ namespace BepInPluginSample
 
         Harmony harmony;
 
-        public static string jsonPath;
+        MyWindowRect myWindowRect;
 
         /// <summary>
         ///  게임 실행시 한번만 실행됨
@@ -51,7 +51,7 @@ namespace BepInPluginSample
             IsGUIOn = Config.Bind("Sample", "isGUIOn", false);
 
             // 위치 저장용 테스트 json
-            jsonPath = Path.GetDirectoryName(this.Config.ConfigFilePath) + $@"\{MyAttribute.PLAGIN_FULL_NAME}.json";
+            myWindowRect = new MyWindowRect(Config);
 
             // 기어 메뉴 추가. 이 플러그인 기능 자체를 멈추려면 enabled 를 꺽어야함. 그러면 OnEnable(), OnDisable() 이 작동함
             SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(Properties.Resources.icon));
@@ -70,18 +70,7 @@ namespace BepInPluginSample
             harmony = Harmony.CreateAndPatchAll(typeof(SamplePatch));
 
             // json 읽기
-            MyLog.LogMessage("jsonPath : "+ jsonPath);
-            if (File.Exists(jsonPath))
-            {
-                windowRectConfig = JsonConvert.DeserializeObject<Position>(File.ReadAllText(jsonPath));
-            }
-            else
-            {
-                windowRectConfig = new Position(windowSpace, windowSpace);
-                File.WriteAllText(jsonPath, JsonConvert.SerializeObject(windowRectConfig, Formatting.Indented)); // 자동 들여쓰기
-            }
-            windowRect.x = windowRectConfig.x;
-            windowRect.y = windowRectConfig.y;
+            myWindowRect.load();
         }
 
         /// <summary>
@@ -128,23 +117,7 @@ namespace BepInPluginSample
 
         }
 
-        private const float windowSpace = 40.0f;
-        private Rect windowRect = new Rect(windowSpace, windowSpace, 400f, 400f);
-        private int windowId = new System.Random().Next();
-
-        private Position windowRectConfig;
-
-        struct Position
-        {
-            public float x;
-            public float y;
-
-            public Position(float x, float y) : this()
-            {
-                this.x = x;
-                this.y = y;
-            }
-        }
+        private int windowId = new System.Random().Next();     
 
         public void OnGUI()
         {
@@ -152,10 +125,8 @@ namespace BepInPluginSample
             {
                 return;
             }
-            // 윈도우 리사이즈시 밖으로 나가버리는거 방지
-            windowRect.x = Mathf.Clamp(windowRect.x, -windowRect.width + windowSpace, Screen.width - windowSpace);
-            windowRect.y = Mathf.Clamp(windowRect.y, -windowRect.height + windowSpace, Screen.height - windowSpace);
-            windowRect = GUILayout.Window(windowId, windowRect, WindowFunction, MyAttribute.PLAGIN_NAME);
+
+            myWindowRect.WindowRect = GUILayout.Window(windowId, myWindowRect.WindowRect, WindowFunction, MyAttribute.PLAGIN_NAME);
         }
 
         private Vector2 scrollPosition;
@@ -227,9 +198,7 @@ namespace BepInPluginSample
             harmony.UnpatchSelf();// ==harmony.UnpatchAll(harmony.Id);
             //harmony.UnpatchAll(); // 정대 사용 금지. 다름 플러그인이 패치한것까지 다 풀려버림
 
-            windowRectConfig.x= windowRect.x;
-            windowRectConfig.y= windowRect.y;
-            File.WriteAllText(jsonPath, JsonConvert.SerializeObject(windowRectConfig, Formatting.Indented)); // 자동 들여쓰기
+            myWindowRect.save();
         }
 
         public void Pause()
