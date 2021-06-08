@@ -5,18 +5,13 @@ using UnityEngine;
 using BepInEx;
 using BepInEx.Logging;
 using System.IO;
+using BepInPluginSample;
 
 namespace COM3D2.Lilly.Plugin
 {
     public class MyLog 
     {
-        static ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource("Sample");
-
-
-        public MyLog()
-        {
-
-        }
+        static ManualLogSource log = BepInEx.Logging.Logger.CreateLogSource(MyAttribute.PLAGIN_NAME);
 
         public static void LogLine()
         {
