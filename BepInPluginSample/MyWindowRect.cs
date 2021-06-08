@@ -9,10 +9,10 @@ using UnityEngine;
 
 namespace BepInPluginSample
 {
-    class MyWindowRect
+    public class MyWindowRect
     {
         private float windowSpace;
-        private Rect windowRect;
+        public Rect windowRect;
         private Position position;
         private static string jsonPath;
 
@@ -40,12 +40,17 @@ namespace BepInPluginSample
             set => windowRect = value;
         }
 
+        public float Height { get => windowRect.height; set => windowRect.height = value; }
+        public float Width { get => windowRect.width; set => windowRect.width = value; }
+        public float X { get => windowRect.x; set => windowRect.x = value; }
+        public float Y { get => windowRect.y; set => windowRect.y = value; }
+
         public MyWindowRect(ConfigFile Config, float x = 50f, float y = 40f, float w = 300f, float h = 600f, float windowSpace = 40f)
         {
             jsonPath = Path.GetDirectoryName(Config.ConfigFilePath) + $@"\{MyAttribute.PLAGIN_FULL_NAME}-windowRect.json";
 
             this.windowSpace = windowSpace;
-            windowRect = new Rect(x, y, w, h);            
+            windowRect = new Rect(x, y, w, h);
         }
 
         public void load()
