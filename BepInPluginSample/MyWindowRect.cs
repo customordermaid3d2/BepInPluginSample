@@ -45,7 +45,7 @@ namespace BepInPluginSample
         public float X { get => windowRect.x; set => windowRect.x = value; }
         public float Y { get => windowRect.y; set => windowRect.y = value; }
 
-        public MyWindowRect(ConfigFile Config, float x = 50f, float y = 40f, float w = 300f, float h = 600f, float windowSpace = 40f)
+        public MyWindowRect(ConfigFile Config, float w = 300f, float h = 600f, float x = 50f, float y = 40f, float windowSpace = 40f)
         {
             jsonPath = Path.GetDirectoryName(Config.ConfigFilePath) + $@"\{MyAttribute.PLAGIN_FULL_NAME}-windowRect.json";
 
