@@ -1,4 +1,5 @@
 ﻿using BepInEx.Configuration;
+using HarmonyLib;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,10 @@ namespace BepInPluginSample
         private float windowSpace;
         private Rect windowRect;
         private Position position;
-        private static string jsonPath;
+        private string jsonPath;
+
+        private static Harmony harmony;
+        private static event Action actionSave;
 
         struct Position
         {
@@ -45,12 +49,18 @@ namespace BepInPluginSample
         public float X { get => windowRect.x; set => windowRect.x = value; }
         public float Y { get => windowRect.y; set => windowRect.y = value; }
 
-        public MyWindowRect(ConfigFile Config, float w = 300f, float h = 600f, float x = 50f, float y = 40f, float windowSpace = 40f)
+        public MyWindowRect(ConfigFile Config,string fileName= MyAttribute.PLAGIN_FULL_NAME, float w = 300f, float h = 600f, float x = 50f, float y = 40f, float windowSpace = 40f)
         {
-            jsonPath = Path.GetDirectoryName(Config.ConfigFilePath) + $@"\{MyAttribute.PLAGIN_FULL_NAME}-windowRect.json";
+            jsonPath = Path.GetDirectoryName(Config.ConfigFilePath) + $@"\{fileName}-windowRect.json";
 
             this.windowSpace = windowSpace;
             windowRect = new Rect(x, y, w, h);
+
+            if (harmony==null)
+            {
+                harmony = Harmony.CreateAndPatchAll(typeof(MyWindowRect));
+            }
+            actionSave += save;
         }
 
         public void load()
@@ -73,6 +83,13 @@ namespace BepInPluginSample
             position.x = windowRect.x;
             position.y = windowRect.y;
             File.WriteAllText(jsonPath, JsonConvert.SerializeObject(position, Formatting.Indented)); // 자동 들여쓰기
+        }
+
+        [HarmonyPatch(typeof(GameMain), "LoadScene")]
+        [HarmonyPostfix]
+        public static void LoadScene()
+        {
+            actionSave();
         }
     }
 }
