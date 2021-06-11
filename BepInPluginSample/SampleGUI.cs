@@ -106,10 +106,10 @@ namespace BepInPluginSample
             GUI.enabled = true;
 
             GUILayout.BeginHorizontal();
+            GUILayout.Label(MyAttribute.PLAGIN_NAME + " " + ShowCounter.Value.ToString(),GUILayout.Height(20));
+            GUILayout.FlexibleSpace();
             if (GUILayout.Button("-", GUILayout.Width(20), GUILayout.Height(20))) { IsOpen = !IsOpen; }
             if (GUILayout.Button("x", GUILayout.Width(20), GUILayout.Height(20))) { isGUIOn = false; }
-            GUILayout.FlexibleSpace();
-            GUILayout.Label(MyAttribute.PLAGIN_NAME + " " + ShowCounter.Value.ToString(),GUILayout.Height(20));
             GUILayout.EndHorizontal();
 
             if (!IsOpen)

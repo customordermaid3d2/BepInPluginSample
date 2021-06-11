@@ -22,24 +22,25 @@ namespace BepInPluginSample
         private static Harmony harmony;
         private static event Action actionSave;
 
-        private ConfigEntry<bool> isOpen ;
+        private ConfigEntry<bool> isOpen;
 
         public bool IsOpen
         {
             get => isOpen.Value;
             set
             {
-                if (isOpen.Value != value)
-                    if (isOpen.Value = value)
-                    {
-                        windowRect.width = windowRectOpen.w;
-                        windowRect.height = windowRectOpen.h;
-                    }
-                    else
-                    {
-                        windowRect.width = windowRectClose.w;
-                        windowRect.height = windowRectClose.h;
-                    }
+                if (isOpen.Value = value)
+                {
+                    windowRect.width = windowRectOpen.w;
+                    windowRect.height = windowRectOpen.h;
+                    windowRect.x -= windowRectOpen.w - windowRectClose.w;
+                }
+                else
+                {
+                    windowRect.width = windowRectClose.w;
+                    windowRect.height = windowRectClose.h;
+                    windowRect.x += windowRectOpen.w - windowRectClose.w;
+                }
             }
         }
 
@@ -84,17 +85,18 @@ namespace BepInPluginSample
         public float X { get => windowRect.x; set => windowRect.x = value; }
         public float Y { get => windowRect.y; set => windowRect.y = value; }
 
-        public MyWindowRect(ConfigFile config,string fileName= MyAttribute.PLAGIN_FULL_NAME, float ho = 600f, float hc = 40f, float wo = 300f, float wc = 300f,  float x = 50f, float y = 40f, float windowSpace = 40f)
+        public MyWindowRect(ConfigFile config, string fileName = MyAttribute.PLAGIN_FULL_NAME, float wc = 200f, float wo = 300f, float hc = 32f, float ho = 600f, float x = 32f, float y = 32f, float windowSpace = 32f)
         {
             jsonPath = Path.GetDirectoryName(config.ConfigFilePath) + $@"\{fileName}-windowRect.json";
-            isOpen = config.Bind("GUI", "isOpen", true);
 
             this.windowSpace = windowSpace;
             windowRect = new Rect(x, y, wo, ho);
-            windowRectOpen = new Size( wo, ho);
-            windowRectClose = new Size( wc, hc);
+            windowRectOpen = new Size(wo, ho);
+            windowRectClose = new Size(wc, hc);
+            isOpen = config.Bind("GUI", "isOpen", true);
+            IsOpen = isOpen.Value;
 
-            if (harmony==null)
+            if (harmony == null)
             {
                 harmony = Harmony.CreateAndPatchAll(typeof(MyWindowRect));
             }
