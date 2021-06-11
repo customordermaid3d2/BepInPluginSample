@@ -20,22 +20,17 @@ namespace BepInPluginSample
     [BepInProcess("COM3D2x64.exe")]
     public class Sample : BaseUnityPlugin
     {
-
         // 단축키 설정파일로 연동
         private ConfigEntry<BepInEx.Configuration.KeyboardShortcut> ShowCounter;
 
-        // GUI ON OFF 설정파일로 저장
-        private ConfigEntry<bool> IsGUIOn;
-
-        private bool isGUIOn
-        {
-            get => IsGUIOn.Value;
-            set => IsGUIOn.Value = value;
-        }
-
         Harmony harmony;
 
-        MyWindowRect myWindowRect;
+        public static Sample sample;
+
+        public Sample()
+        {
+            sample = this;
+        }
 
         /// <summary>
         ///  게임 실행시 한번만 실행됨
@@ -45,17 +40,11 @@ namespace BepInPluginSample
             MyLog.LogMessage("Awake");
 
             // 단축키 기본값 설정
-            ShowCounter = Config.Bind("Sample", "KeyboardShortcut0", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
+            ShowCounter = Config.Bind("KeyboardShortcut", "KeyboardShortcut0", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
 
-            // 일반 설정값
-            IsGUIOn = Config.Bind("Sample", "isGUIOn", false);
-
-            // 위치 저장용 테스트 json
-            myWindowRect = new MyWindowRect(Config);
+            
 
             // 기어 메뉴 추가. 이 플러그인 기능 자체를 멈추려면 enabled 를 꺽어야함. 그러면 OnEnable(), OnDisable() 이 작동함
-            SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(Properties.Resources.icon));
-            SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { isGUIOn = !isGUIOn; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(Properties.Resources.icon));
         }
 
 
@@ -69,8 +58,6 @@ namespace BepInPluginSample
             // 하모니 패치
             harmony = Harmony.CreateAndPatchAll(typeof(SamplePatch));
 
-            // json 읽기
-            myWindowRect.load();
         }
 
         /// <summary>
@@ -79,6 +66,10 @@ namespace BepInPluginSample
         public void Start()
         {
             MyLog.LogMessage("Start");
+
+            SampleGUI.Install(gameObject, Config);
+
+            SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(BepInPluginSample.Properties.Resources.icon));
         }
 
         public string scene_name = string.Empty;
@@ -107,7 +98,6 @@ namespace BepInPluginSample
             }
             if (ShowCounter.Value.IsUp())
             {
-                isGUIOn = !isGUIOn;
                 MyLog.LogMessage("IsUp", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
             }
         }
@@ -117,88 +107,23 @@ namespace BepInPluginSample
 
         }
 
-        private int windowId = new System.Random().Next();     
+        
 
         public void OnGUI()
         {
-            if (!isGUIOn)
-            {
-                return;
-            }
-
-            myWindowRect.WindowRect = GUILayout.Window(windowId, myWindowRect.WindowRect, WindowFunction, MyAttribute.PLAGIN_NAME);
+          
         }
 
-        private Vector2 scrollPosition;
 
-        public void WindowFunction(int id)
-        {
-            GUI.enabled = true;
-            scrollPosition = GUILayout.BeginScrollView(scrollPosition);
-            if (GUILayout.Button("sample1 Start Coroutine"))
-            {
-                Debug.Log("Button1");
-                StartCoroutine(MyCoroutine());
-            }
-            GUILayout.BeginHorizontal();
-            if (GUILayout.Button("sample2 Stop Coroutine"))
-            {
-                Debug.Log("Button2");
-                isCoroutine = false;
-            }
-            GUILayout.BeginVertical();
-            if (GUILayout.Button("sample3"))
-            {
-                Debug.Log("Button3");
-            }
-            GUILayout.EndVertical();
-            GUI.enabled = false;
-            if (GUILayout.Button("sample4"))
-            {
-                Debug.Log("Button4");
-            }
-            GUILayout.EndHorizontal();
-            if (GUILayout.Button("sample5"))
-            {
-                Debug.Log("Button5");
-            }
-            GUILayout.EndScrollView();
-
-            if (GUI.changed)
-            {
-                Debug.Log("changed");
-            }
-
-            GUI.enabled = true;
-            GUI.DragWindow(); // 창 드레그 가능하게 해줌. 마지막에만 넣어야함
-        }
-
-        private bool isCoroutine = false;
-        public int CoroutineCount = 0;
-
-        private IEnumerator MyCoroutine()
-        {
-            isCoroutine = true;
-            while (isCoroutine)
-            {
-                    MyLog.LogMessage("MyCoroutine ", ++CoroutineCount);
-                //yield return null;
-                yield return new WaitForSeconds(1f);
-            }
-        }
 
         public void OnDisable()
         {
             MyLog.LogMessage("OnDisable");
 
-            isCoroutine = false;
-
             SceneManager.sceneLoaded -= this.OnSceneLoaded;
 
             harmony.UnpatchSelf();// ==harmony.UnpatchAll(harmony.Id);
             //harmony.UnpatchAll(); // 정대 사용 금지. 다름 플러그인이 패치한것까지 다 풀려버림
-
-            myWindowRect.save();
         }
 
         public void Pause()

@@ -14,11 +14,34 @@ namespace BepInPluginSample
     {
         private float windowSpace;
         private Rect windowRect;
+        private Size windowRectOpen;
+        private Size windowRectClose;
         private Position position;
         private string jsonPath;
 
         private static Harmony harmony;
         private static event Action actionSave;
+
+        private ConfigEntry<bool> isOpen ;
+
+        public bool IsOpen
+        {
+            get => isOpen.Value;
+            set
+            {
+                if (isOpen.Value != value)
+                    if (isOpen.Value = value)
+                    {
+                        windowRect.width = windowRectOpen.w;
+                        windowRect.height = windowRectOpen.h;
+                    }
+                    else
+                    {
+                        windowRect.width = windowRectClose.w;
+                        windowRect.height = windowRectClose.h;
+                    }
+            }
+        }
 
         struct Position
         {
@@ -29,6 +52,18 @@ namespace BepInPluginSample
             {
                 this.x = x;
                 this.y = y;
+            }
+        }
+
+        struct Size
+        {
+            public float w;
+            public float h;
+
+            public Size(float w, float h) : this()
+            {
+                this.w = w;
+                this.h = h;
             }
         }
 
@@ -49,12 +84,15 @@ namespace BepInPluginSample
         public float X { get => windowRect.x; set => windowRect.x = value; }
         public float Y { get => windowRect.y; set => windowRect.y = value; }
 
-        public MyWindowRect(ConfigFile Config,string fileName= MyAttribute.PLAGIN_FULL_NAME, float w = 300f, float h = 600f, float x = 50f, float y = 40f, float windowSpace = 40f)
+        public MyWindowRect(ConfigFile config,string fileName= MyAttribute.PLAGIN_FULL_NAME, float ho = 600f, float hc = 40f, float wo = 300f, float wc = 300f,  float x = 50f, float y = 40f, float windowSpace = 40f)
         {
-            jsonPath = Path.GetDirectoryName(Config.ConfigFilePath) + $@"\{fileName}-windowRect.json";
+            jsonPath = Path.GetDirectoryName(config.ConfigFilePath) + $@"\{fileName}-windowRect.json";
+            isOpen = config.Bind("GUI", "isOpen", true);
 
             this.windowSpace = windowSpace;
-            windowRect = new Rect(x, y, w, h);
+            windowRect = new Rect(x, y, wo, ho);
+            windowRectOpen = new Size( wo, ho);
+            windowRectClose = new Size( wc, hc);
 
             if (harmony==null)
             {
