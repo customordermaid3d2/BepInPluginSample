@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace BepInPluginSample
 {
@@ -66,11 +67,17 @@ namespace BepInPluginSample
             MyLog.LogMessage("OnEnable");
 
             SampleGUI.myWindowRect.load();
+            SceneManager.sceneLoaded += this.OnSceneLoaded;
         }
 
         public void Start()
         {
             MyLog.LogMessage("Start");            
+        }
+
+        public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            SampleGUI.myWindowRect.save();
         }
 
         private void Update()
@@ -169,6 +176,7 @@ namespace BepInPluginSample
         {
             SampleGUI.isCoroutine = false;
             SampleGUI.myWindowRect.save();
+            SceneManager.sceneLoaded -= this.OnSceneLoaded;
         }
 
         public static bool isCoroutine = false;
