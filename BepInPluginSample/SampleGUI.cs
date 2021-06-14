@@ -105,6 +105,7 @@ namespace BepInPluginSample
             //GUI.skin.window = ;
 
             //myWindowRect.WindowRect = GUILayout.Window(windowId, myWindowRect.WindowRect, WindowFunction, MyAttribute.PLAGIN_NAME + " " + ShowCounter.Value.ToString(), GUI.skin.box);
+            //GUI.skin.box.
             myWindowRect.WindowRect = GUILayout.Window(windowId, myWindowRect.WindowRect, WindowFunction, "", GUI.skin.box);
         }
 

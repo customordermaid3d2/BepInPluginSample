@@ -136,9 +136,10 @@ namespace BepInPluginSample
             MyLog.LogMessage("Resume");
         }
 
-
-
-
+        public void OnApplicationQuit()
+        {
+            MyLog.LogMessage("OnApplicationQuit");
+        }
 
     }
 }
