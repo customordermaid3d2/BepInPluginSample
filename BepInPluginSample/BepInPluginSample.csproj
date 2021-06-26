@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BepInPluginSample</RootNamespace>
-    <AssemblyName>COM3D2.AnmEdit.Plugin</AssemblyName>
+    <AssemblyName>BepInPluginSample</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
