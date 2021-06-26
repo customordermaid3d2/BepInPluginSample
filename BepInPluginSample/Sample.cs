@@ -21,7 +21,7 @@ namespace BepInPluginSample
     public class Sample : BaseUnityPlugin
     {
         // 단축키 설정파일로 연동
-        private ConfigEntry<BepInEx.Configuration.KeyboardShortcut> ShowCounter;
+        //private ConfigEntry<BepInEx.Configuration.KeyboardShortcut> ShowCounter;
 
         Harmony harmony;
 
@@ -40,7 +40,7 @@ namespace BepInPluginSample
             MyLog.LogMessage("Awake");
 
             // 단축키 기본값 설정
-            ShowCounter = Config.Bind("KeyboardShortcut", "KeyboardShortcut0", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
+            //ShowCounter = Config.Bind("KeyboardShortcut", "KeyboardShortcut0", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
 
             
 
@@ -67,9 +67,10 @@ namespace BepInPluginSample
         {
             MyLog.LogMessage("Start");
 
+            AnmEditUtill.init();
             SampleGUI.Install(gameObject, Config);
 
-            SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(BepInPluginSample.Properties.Resources.icon));
+            //SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(BepInPluginSample.Properties.Resources.icon));
         }
 
         public string scene_name = string.Empty;
@@ -88,18 +89,18 @@ namespace BepInPluginSample
 
         public void Update()
         {
-            if (ShowCounter.Value.IsDown())
-            {
-                MyLog.LogMessage("IsDown", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
-            }
-            if (ShowCounter.Value.IsPressed())
-            {
-                MyLog.LogMessage("IsPressed", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
-            }
-            if (ShowCounter.Value.IsUp())
-            {
-                MyLog.LogMessage("IsUp", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
-            }
+            //if (ShowCounter.Value.IsDown())
+            //{
+            //    MyLog.LogMessage("IsDown", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
+            //}
+            //if (ShowCounter.Value.IsPressed())
+            //{
+            //    MyLog.LogMessage("IsPressed", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
+            //}
+            //if (ShowCounter.Value.IsUp())
+            //{
+            //    MyLog.LogMessage("IsUp", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
+            //}
         }
 
         public void LateUpdate()

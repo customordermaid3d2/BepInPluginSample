@@ -27,10 +27,17 @@ namespace BepInPluginSample
         // 위치 저장용 테스트 json
         public static MyWindowRect myWindowRect;
 
+        public static int all;
+        public static int seleted;
+        public static int seletedChg;
+
+        static string[] type = new string[] { "one", "all" };
+
+
         public static bool IsOpen
         {
             get => myWindowRect.IsOpen;
-            set => myWindowRect.IsOpen = value;            
+            set => myWindowRect.IsOpen = value;
         }
 
         // GUI ON OFF 설정파일로 저장
@@ -42,14 +49,14 @@ namespace BepInPluginSample
             set => IsGUIOn.Value = value;
         }
 
-        internal static SampleGUI Install(GameObject parent,ConfigFile config)
+        internal static SampleGUI Install(GameObject parent, ConfigFile config)
         {
-            SampleGUI. config = config;
+            SampleGUI.config = config;
             instance = parent.GetComponent<SampleGUI>();
             if (instance == null)
             {
                 instance = parent.AddComponent<SampleGUI>();
-                MyLog.LogMessage("GameObjectMgr.Install", instance.name);                
+                MyLog.LogMessage("GameObjectMgr.Install", instance.name);
             }
             return instance;
         }
@@ -58,7 +65,7 @@ namespace BepInPluginSample
         {
             myWindowRect = new MyWindowRect(config);
             IsGUIOn = config.Bind("GUI", "isGUIOn", false);
-            ShowCounter = config.Bind("GUI", "isGUIOnKey", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
+            ShowCounter = config.Bind("GUI", "isGUIOnKey", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Minus, KeyCode.LeftControl));
             SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { SampleGUI.isGUIOn = !SampleGUI.isGUIOn; }), MyAttribute.PLAGIN_NAME + " : " + ShowCounter.Value.ToString(), MyUtill.ExtractResource(BepInPluginSample.Properties.Resources.icon));
         }
 
@@ -72,7 +79,7 @@ namespace BepInPluginSample
 
         public void Start()
         {
-            MyLog.LogMessage("Start");            
+            MyLog.LogMessage("Start");
         }
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -114,7 +121,7 @@ namespace BepInPluginSample
             GUI.enabled = true;
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label(MyAttribute.PLAGIN_NAME + " " + ShowCounter.Value.ToString(),GUILayout.Height(20));
+            GUILayout.Label(MyAttribute.PLAGIN_NAME + " " + ShowCounter.Value.ToString(), GUILayout.Height(20));
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("-", GUILayout.Width(20), GUILayout.Height(20))) { IsOpen = !IsOpen; }
             if (GUILayout.Button("x", GUILayout.Width(20), GUILayout.Height(20))) { isGUIOn = false; }
@@ -128,44 +135,47 @@ namespace BepInPluginSample
             {
                 scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
-                if (GUILayout.Button("sample1 Start Coroutine"))
-                {
-                    Debug.Log("Button1");
-                    Sample.sample.StartCoroutine(MyCoroutine());
-                }
+                GUILayout.Label(AnmEditUtill.fileName);
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button("sample5"))
-                {
-                    Debug.Log("Button5");
-                }
-                GUILayout.BeginVertical();
-                if (GUILayout.Button("sample7"))
-                {
-                    Debug.Log("Button7");
-                }
-                GUI.enabled = false;
-                if (GUILayout.Button("sample3"))
-                {
-                    Debug.Log("Button3");
-                }
-                GUILayout.EndVertical();
-                
-                if (GUILayout.Button("sample4"))
-                {
-                    Debug.Log("Button4");
-                }
-                GUILayout.EndHorizontal();
-                GUI.enabled = true;
-                if (GUILayout.Button("sample2 Stop Coroutine"))
-                {
-                    Debug.Log("Button2");
-                    isCoroutine = false;
-                }
-                GUILayout.EndScrollView();
 
+                if (GUILayout.Button("open")) { AnmEditUtill.ShowDialogLoadRun(); }
+                if (GUILayout.Button("save")) { AnmEditUtill.ShowDialogSaveRun(); }
+
+                GUILayout.EndHorizontal();
+
+                GUILayout.Label(AnmEditUtill.anmState.time.ToString());
+                time = GUILayout.HorizontalScrollbar(AnmEditUtill.time, 1, 0, AnmEditUtill.length+1);
+
+                GUILayout.BeginHorizontal();
+
+                if (GUILayout.Button("play")) { AnmEditUtill.Play(); }
+                if (GUILayout.Button("stop")) { AnmEditUtill.Stop(); }
+
+                GUILayout.EndHorizontal();
+
+                all = GUILayout.SelectionGrid(all, type, 2);
+
+                GUILayout.Label("maid select");
+                // 여기는 출력된 메이드들 이름만 가져옴
+                // seleted 가 이름 위치 번호만 가져온건데
+                seletedChg = GUILayout.SelectionGrid(seleted, SamplePatch.maidNames, 1);
+
+                GUI.enabled = true;
+
+                GUILayout.EndScrollView();
+                
                 if (GUI.changed)
-                {
+                {                    
                     Debug.Log("changed");
+                    if (seletedChg!= seleted)
+                    {
+                        seleted = seletedChg;
+                        AnmEditUtill.SetMaid();
+                    }
+                    if (AnmEditUtill.time != time)
+                    {
+                        AnmEditUtill.time = time;
+                    }
                 }
 
             }
@@ -182,6 +192,7 @@ namespace BepInPluginSample
 
         public static bool isCoroutine = false;
         public static int CoroutineCount = 0;
+        private float time;
 
         private IEnumerator MyCoroutine()
         {
