@@ -136,6 +136,9 @@ namespace COM3D2.TBodyAddItemExceptionSkip.Plugin
             MyLog.LogMessage("Resume");
         }
 
+        /// <summary>
+        /// 게임 X 버튼 눌렀을때 반응
+        /// </summary>
         public void OnApplicationQuit()
         {
             MyLog.LogMessage("OnApplicationQuit");
