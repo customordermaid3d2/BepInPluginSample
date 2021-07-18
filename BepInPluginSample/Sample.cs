@@ -13,7 +13,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace COM3D2.TBodyAddItemExceptionSkip.Plugin
+namespace BepInPluginSample
 {
     [BepInPlugin(MyAttribute.PLAGIN_FULL_NAME, MyAttribute.PLAGIN_FULL_NAME, MyAttribute.PLAGIN_VERSION)]// 버전 규칙 잇음. 반드시 2~4개의 숫자구성으로 해야함. 미준수시 못읽어들임
     //[BepInPlugin("COM3D2.Sample.Plugin", "COM3D2.Sample.Plugin", "21.6.6")]// 버전 규칙 잇음. 반드시 2~4개의 숫자구성으로 해야함. 미준수시 못읽어들임
@@ -21,15 +21,15 @@ namespace COM3D2.TBodyAddItemExceptionSkip.Plugin
     public class Sample : BaseUnityPlugin
     {
         // 단축키 설정파일로 연동
-        //private ConfigEntry<BepInEx.Configuration.KeyboardShortcut> ShowCounter;
+        private ConfigEntry<BepInEx.Configuration.KeyboardShortcut> ShowCounter;
 
         Harmony harmony;
 
-       // public static Sample sample;
+        public static Sample sample;
 
         public Sample()
         {
-        //    sample = this;
+            sample = this;
         }
 
         /// <summary>
@@ -40,9 +40,9 @@ namespace COM3D2.TBodyAddItemExceptionSkip.Plugin
             MyLog.LogMessage("Awake");
 
             // 단축키 기본값 설정
-          //  ShowCounter = Config.Bind("KeyboardShortcut", "KeyboardShortcut0", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
+            ShowCounter = Config.Bind("KeyboardShortcut", "KeyboardShortcut0", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
 
-            
+            SampleConfig.Install(MyLog.log);
 
             // 기어 메뉴 추가. 이 플러그인 기능 자체를 멈추려면 enabled 를 꺽어야함. 그러면 OnEnable(), OnDisable() 이 작동함
         }
@@ -53,7 +53,7 @@ namespace COM3D2.TBodyAddItemExceptionSkip.Plugin
         {
             MyLog.LogMessage("OnEnable");
 
-            //SceneManager.sceneLoaded += this.OnSceneLoaded;
+            SceneManager.sceneLoaded += this.OnSceneLoaded;
 
             // 하모니 패치
             harmony = Harmony.CreateAndPatchAll(typeof(SamplePatch));
@@ -67,25 +67,25 @@ namespace COM3D2.TBodyAddItemExceptionSkip.Plugin
         {
             MyLog.LogMessage("Start");
 
+            SampleGUI.Install(gameObject, Config);
 
-
-            //SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(BepInPluginSample.Properties.Resources.icon));
+            SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(BepInPluginSample.Properties.Resources.icon));
         }
-        /*
 
-       // public string scene_name = string.Empty;
+        public string scene_name = string.Empty;
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             MyLog.LogMessage("OnSceneLoaded", scene.name, scene.buildIndex);
             //  scene.buildIndex 는 쓰지 말자 제발
-            //scene_name = scene.name;
+            scene_name = scene.name;
         }
 
         public void FixedUpdate()
         {
 
         }
+
         public void Update()
         {
             if (ShowCounter.Value.IsDown())
@@ -113,19 +113,19 @@ namespace COM3D2.TBodyAddItemExceptionSkip.Plugin
         {
           
         }
-        */
+
 
 
         public void OnDisable()
         {
             MyLog.LogMessage("OnDisable");
 
-            //SceneManager.sceneLoaded -= this.OnSceneLoaded;
+            SceneManager.sceneLoaded -= this.OnSceneLoaded;
 
             harmony.UnpatchSelf();// ==harmony.UnpatchAll(harmony.Id);
             //harmony.UnpatchAll(); // 정대 사용 금지. 다름 플러그인이 패치한것까지 다 풀려버림
         }
-        /*
+
         public void Pause()
         {
             MyLog.LogMessage("Pause");
@@ -143,6 +143,6 @@ namespace COM3D2.TBodyAddItemExceptionSkip.Plugin
         {
             MyLog.LogMessage("OnApplicationQuit");
         }
-        */
+
     }
 }
