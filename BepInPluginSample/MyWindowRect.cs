@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace BepInPluginSample
+namespace COM3D2.TBodyAddItemExceptionSkip.Plugin
 {
     public class MyWindowRect
     {

@@ -5,7 +5,7 @@ using UnityEngine;
 using BepInEx;
 using BepInEx.Logging;
 using System.IO;
-using BepInPluginSample;
+using COM3D2.TBodyAddItemExceptionSkip.Plugin;
 
 namespace COM3D2.Lilly.Plugin
 {
