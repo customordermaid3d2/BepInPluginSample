@@ -56,7 +56,7 @@ namespace BepInPluginSample
 
         public void Awake()
         {
-            myWindowRect = new MyWindowRect(config);
+            myWindowRect = new MyWindowRect(config , MyAttribute.PLAGIN_FULL_NAME+"win");
             IsGUIOn = config.Bind("GUI", "isGUIOn", false);
             ShowCounter = config.Bind("GUI", "isGUIOnKey", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
             SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { SampleGUI.isGUIOn = !SampleGUI.isGUIOn; }), MyAttribute.PLAGIN_NAME + " : " + ShowCounter.Value.ToString(), MyUtill.ExtractResource(BepInPluginSample.Properties.Resources.icon));
