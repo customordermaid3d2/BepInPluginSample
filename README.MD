@@ -15,3 +15,19 @@
 # 샘플 이미지
 
 ![2021-06-06 19 16 10](https://user-images.githubusercontent.com/20321215/120920873-f7b72d00-c6fb-11eb-80a7-8e9e73d3a013.png)
+
+
+
+# 설치 위치
+
+COM3D2\BepInEx\plugins
+
+
+# 필요한거
+
+- BepInEx https://github.com/BepInEx/BepInEx  
+- SybarisLoader https://github.com/BepInEx/BepInEx.SybarisLoader.Patcher  
+- UnityInjectorLoader https://github.com/BepInEx/BepInEx.UnityInjectorLoader  
+
+- COM3D2.API.dll  https://github.com/DeathWeasel1337/COM3D2_Plugins/releases/download/v3/COM3D2.API.v1.0.zip
+- LillyUtill 21.7.22 over https://github.com/customordermaid3d2/COM3D2.LillyUtill/releases  

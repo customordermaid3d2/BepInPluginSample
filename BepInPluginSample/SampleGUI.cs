@@ -1,6 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
-using COM3D2.Lilly.Plugin;
+using COM3D2.LillyUtill;
 using COM3D2API;
 using System;
 using System.Collections;
@@ -27,11 +27,28 @@ namespace BepInPluginSample
         // 위치 저장용 테스트 json
         public static MyWindowRect myWindowRect;
 
-        public static bool IsOpen
+        public string windowName = MyAttribute.PLAGIN_NAME;
+        public string FullName = MyAttribute.PLAGIN_NAME;
+        public string ShortName = "SP";
+
+
+        public bool IsOpen
         {
             get => myWindowRect.IsOpen;
-            set => myWindowRect.IsOpen = value;            
+            set
+            {
+                myWindowRect.IsOpen = value;
+                if (value)
+                {
+                    windowName = FullName;
+                }
+                else
+                {
+                    windowName = ShortName;
+                }
+            }
         }
+
 
         // GUI ON OFF 설정파일로 저장
         private static ConfigEntry<bool> IsGUIOn;
@@ -49,7 +66,7 @@ namespace BepInPluginSample
             if (instance == null)
             {
                 instance = parent.AddComponent<SampleGUI>();
-                MyLog.LogMessage("GameObjectMgr.Install", instance.name);                
+                Sample.myLog.LogMessage("GameObjectMgr.Install", instance.name);                
             }
             return instance;
         }
@@ -57,6 +74,7 @@ namespace BepInPluginSample
         public void Awake()
         {
             myWindowRect = new MyWindowRect(config , MyAttribute.PLAGIN_FULL_NAME+"win");
+            IsOpen = IsOpen;
             IsGUIOn = config.Bind("GUI", "isGUIOn", false);
             ShowCounter = config.Bind("GUI", "isGUIOnKey", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
             SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { SampleGUI.isGUIOn = !SampleGUI.isGUIOn; }), MyAttribute.PLAGIN_NAME + " : " + ShowCounter.Value.ToString(), MyUtill.ExtractResource(BepInPluginSample.Properties.Resources.icon));
@@ -64,7 +82,7 @@ namespace BepInPluginSample
 
         public void OnEnable()
         {
-            MyLog.LogMessage("OnEnable");
+            Sample.myLog.LogMessage("OnEnable");
 
             SampleGUI.myWindowRect.load();
             SceneManager.sceneLoaded += this.OnSceneLoaded;
@@ -72,7 +90,7 @@ namespace BepInPluginSample
 
         public void Start()
         {
-            MyLog.LogMessage("Start");            
+            Sample.myLog.LogMessage("Start");            
         }
 
         public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -93,7 +111,7 @@ namespace BepInPluginSample
             if (ShowCounter.Value.IsUp())
             {
                 isGUIOn = !isGUIOn;
-                MyLog.LogMessage("IsUp", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
+                Sample.myLog.LogMessage("IsUp", ShowCounter.Value.Modifiers, ShowCounter.Value.MainKey);
             }
         }
 
@@ -188,7 +206,7 @@ namespace BepInPluginSample
             isCoroutine = true;
             while (isCoroutine)
             {
-                MyLog.LogMessage("MyCoroutine ", ++CoroutineCount);
+                Sample.myLog.LogMessage("MyCoroutine ", ++CoroutineCount);
                 //yield return null;
                 yield return new WaitForSeconds(1f);
             }
