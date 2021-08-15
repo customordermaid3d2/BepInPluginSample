@@ -18,7 +18,7 @@ namespace BepInPluginSample
     class MyAttribute
     {
         public const string PLAGIN_NAME = "Sample";
-        public const string PLAGIN_VERSION = "21.7.27";
+        public const string PLAGIN_VERSION = "21.8.15";
         public const string PLAGIN_FULL_NAME = "COM3D2.Sample.Plugin";
     }
 
@@ -78,7 +78,7 @@ namespace BepInPluginSample
 
             //SampleGUI.Install(gameObject, Config);
 
-            SampleGUI2.Install<SampleGUI2>(gameObject, Config, MyAttribute.PLAGIN_NAME, "SP", BepInPluginSample.Properties.Resources.icon, new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
+            SampleGUI2.Install<SampleGUI2>(gameObject, Config, MyAttribute.PLAGIN_FULL_NAME, MyAttribute.PLAGIN_NAME, "SP", BepInPluginSample.Properties.Resources.icon, new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
 
             //SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { enabled = !enabled; }), MyAttribute.PLAGIN_NAME, MyUtill.ExtractResource(BepInPluginSample.Properties.Resources.icon));
         }
