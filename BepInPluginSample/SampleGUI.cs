@@ -76,8 +76,31 @@ namespace BepInPluginSample
             myWindowRect = new MyWindowRect(config , MyAttribute.PLAGIN_FULL_NAME+"win");
             IsOpen = IsOpen;
             IsGUIOn = config.Bind("GUI", "isGUIOn", false);
+            IsGUIOn.SettingChanged += IsGUIOnSettingChanged;
             ShowCounter = config.Bind("GUI", "isGUIOnKey", new BepInEx.Configuration.KeyboardShortcut(KeyCode.Alpha9, KeyCode.LeftControl));
             SystemShortcutAPI.AddButton(MyAttribute.PLAGIN_FULL_NAME, new Action(delegate () { SampleGUI.isGUIOn = !SampleGUI.isGUIOn; }), MyAttribute.PLAGIN_NAME + " : " + ShowCounter.Value.ToString(), MyUtill.ExtractResource(BepInPluginSample.Properties.Resources.icon));
+        }
+
+        private void IsGUIOnSettingChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Sample.myLog.LogMessage("IsGUIOnSettingChanged", sender);
+                SettingChangedEventArgs es = e as SettingChangedEventArgs;
+                Sample.myLog.LogMessage("IsGUIOnSettingChanged"
+                    ,es.ChangedSetting.BoxedValue 
+                    ,es.ChangedSetting.DefaultValue
+                    ,es.ChangedSetting.Definition
+                    ,es.ChangedSetting.Description
+                    ,es.ChangedSetting.SettingType
+                    ,es.ChangedSetting.SettingType.Name
+                    ,es.ChangedSetting.SettingType.FullName
+                    );
+            }
+            catch (Exception ex )
+            {
+                Sample.myLog.LogError(ex.ToString(), sender);
+            }
         }
 
         public void OnEnable()
